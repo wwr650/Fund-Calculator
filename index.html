@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>基金份额与金额换算工具 | 净值换算器</title>
+    <title>基金净值换算器 | 智能双向换算</title>
     <style>
         * {
             box-sizing: border-box;
             font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
         }
         body {
-            background: linear-gradient(145deg, #e9eff7 0%, #dce3ec 100%);
+            background: linear-gradient(145deg, #eef2f7 0%, #dfe6ef 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -19,36 +19,49 @@
             padding: 20px;
         }
         .card {
-            max-width: 620px;
+            max-width: 640px;
             width: 100%;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(0px);
-            border-radius: 42px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.05);
-            padding: 28px 24px 36px;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.98);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.03);
+            padding: 28px 26px 36px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.6);
         }
         h1 {
-            font-size: 1.85rem;
-            font-weight: 600;
+            font-size: 1.9rem;
+            font-weight: 700;
             margin: 0 0 0.2rem 0;
-            background: linear-gradient(135deg, #1a2a3f, #1e3a5f);
+            background: linear-gradient(135deg, #1e3a5f, #0f2c44);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.2px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge {
+            background: #e9f0f5;
+            border-radius: 60px;
+            padding: 4px 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1f6392;
+            display: inline-block;
         }
         .sub {
             font-size: 0.9rem;
             color: #4a627a;
             margin-bottom: 2rem;
             border-left: 3px solid #2c7da0;
-            padding-left: 12px;
+            padding-left: 14px;
             font-weight: 450;
+            margin-top: 6px;
         }
         .input-group {
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.9rem;
             display: flex;
             flex-direction: column;
         }
@@ -64,24 +77,25 @@
             font-size: 1rem;
         }
         .unit-hint {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #6c86a0;
             background: #f0f4fa;
-            padding: 2px 8px;
-            border-radius: 20px;
+            padding: 2px 10px;
+            border-radius: 30px;
         }
         .input-wrapper {
             display: flex;
             align-items: center;
-            background: #f8fafd;
-            border: 1.5px solid #cfdfed;
-            border-radius: 36px;
+            background: #ffffff;
+            border: 1.5px solid #dae6f0;
+            border-radius: 44px;
             transition: all 0.2s;
-            padding: 2px 6px 2px 18px;
+            padding: 2px 6px 2px 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
         .input-wrapper:focus-within {
             border-color: #2c7da0;
-            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.15);
             background: #ffffff;
         }
         .input-wrapper span {
@@ -101,21 +115,13 @@
             color: #0a2a44;
         }
         input::placeholder {
-            color: #b9c8e2;
+            color: #b9cfe5;
             font-weight: 400;
         }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button {
-            opacity: 0.5;
-        }
-        .flex-row-2 {
+        .flex-row {
             display: flex;
             gap: 1rem;
-            flex-wrap: wrap;
-            margin: 24px 0 16px;
+            margin: 18px 0 20px;
         }
         .action-btn {
             flex: 1;
@@ -128,14 +134,13 @@
             color: #1f6392;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.02);
             border: 1px solid #d0e2f0;
         }
         .action-btn.primary {
             background: #1a5f7a;
             color: white;
             border: none;
-            box-shadow: 0 4px 8px rgba(26,95,122,0.2);
+            box-shadow: 0 4px 10px rgba(26,95,122,0.2);
         }
         .action-btn.primary:hover {
             background: #0f4b62;
@@ -147,9 +152,9 @@
         }
         .result-area {
             background: #eef3fc;
-            border-radius: 32px;
-            padding: 18px 22px;
-            margin: 20px 0 10px;
+            border-radius: 36px;
+            padding: 18px 24px;
+            margin: 22px 0 12px;
             border-left: 5px solid #2c7da0;
         }
         .result-item {
@@ -165,13 +170,21 @@
         .result-label {
             font-weight: 500;
             color: #2c4c6e;
+            font-size: 0.9rem;
         }
         .result-value {
             font-weight: 700;
-            font-size: 1.35rem;
+            font-size: 1.3rem;
             color: #0a3957;
-            word-break: break-all;
+            word-break: break-word;
             text-align: right;
+        }
+        .error-msg {
+            color: #c23b22;
+            font-size: 0.73rem;
+            margin-top: 6px;
+            margin-left: 18px;
+            font-weight: 500;
         }
         .small-note {
             font-size: 0.7rem;
@@ -181,16 +194,9 @@
             border-top: 1px solid #e2edf5;
             padding-top: 14px;
         }
-        .error-msg {
-            color: #c23b22;
-            font-size: 0.75rem;
-            margin-top: 6px;
-            margin-left: 18px;
-            font-weight: 500;
-        }
         hr {
-            margin: 12px 0;
-            border-color: #e2edf5;
+            margin: 10px 0;
+            border-color: #d9e4ef;
         }
         @media (max-width: 480px) {
             .card {
@@ -199,34 +205,37 @@
             .result-value {
                 font-size: 1.1rem;
             }
-            .flex-row-2 {
-                flex-direction: column;
-                gap: 0.7rem;
-            }
-        }
-        .badge {
-            background: #ffffffc9;
-            border-radius: 60px;
-            padding: 3px 12px;
-            font-size: 0.7rem;
-            display: inline-block;
-            margin-left: 8px;
-            color: #2c7da0;
         }
         footer {
             font-size: 0.7rem;
             text-align: center;
-            margin-top: 24px;
+            margin-top: 18px;
             color: #6a85a0;
+        }
+        .key-hint {
+            background: #eef3fc;
+            border-radius: 24px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            color: #2c7da0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>📊 基金换算器 <span class="badge">份额 ⇄ 金额</span></h1>
-    <div class="sub">根据单位净值，自由换算持有份额与对应金额</div>
+    <h1>
+        📊 基金换算器 
+        <span class="badge">智能双向换算</span>
+    </h1>
+    <div class="sub">
+        修改份额 → 自动计算金额 &nbsp;|&nbsp; 修改金额 → 自动计算份额<br>
+        <span class="key-hint">⏎ 回车 或 失焦 触发换算 · 不改动您正在编辑的字段</span>
+    </div>
 
-    <!-- 单位净值输入 (核心) -->
+    <!-- 单位净值 (核心) -->
     <div class="input-group">
         <div class="label-row">
             <label>📈 当前单位净值 (NAV)</label>
@@ -234,48 +243,46 @@
         </div>
         <div class="input-wrapper">
             <span>¥</span>
-            <input type="number" id="navInput" placeholder="例如: 1.2580" step="any" value="1.2580">
+            <input type="text" id="navInput" placeholder="例如: 1.2580" inputmode="decimal" value="1.2580">
         </div>
         <div id="navError" class="error-msg"></div>
     </div>
 
-    <!-- 份额输入区 -->
+    <!-- 持有份额输入区 -->
     <div class="input-group">
         <div class="label-row">
-            <label>📦 持有份额 (份)</label>
-            <span class="unit-hint">份数</span>
+            <label>📦 持有份额</label>
+            <span class="unit-hint">份</span>
         </div>
         <div class="input-wrapper">
             <span>🧾</span>
-            <input type="number" id="sharesInput" placeholder="输入份额数量" step="any" value="">
+            <input type="text" id="sharesInput" placeholder="输入份额数量，如 1250.68" inputmode="decimal" value="">
         </div>
         <div id="sharesError" class="error-msg"></div>
     </div>
 
-    <!-- 金额输入区 -->
+    <!-- 金额输入区 (金额 ↔ 份额) -->
     <div class="input-group">
         <div class="label-row">
-            <label>💰 对应金额 (元)</label>
-            <span class="unit-hint">市值 / 赎回估算</span>
+            <label>💰 金额</label>
+            <span class="unit-hint">元 (市值)</span>
         </div>
         <div class="input-wrapper">
             <span>¥</span>
-            <input type="number" id="amountInput" placeholder="输入金额数值" step="any" value="">
+            <input type="text" id="amountInput" placeholder="输入金额，如 5000.00" inputmode="decimal" value="">
         </div>
         <div id="amountError" class="error-msg"></div>
     </div>
 
-    <!-- 操作按钮组 -->
-    <div class="flex-row-2">
-        <button class="action-btn" id="shareToAmountBtn">📌 份额 → 金额</button>
-        <button class="action-btn" id="amountToShareBtn">🔄 金额 → 份额</button>
+    <!-- 辅助按钮 (仅清空) -->
+    <div class="flex-row">
         <button class="action-btn primary" id="clearBtn">🗑️ 清空所有</button>
     </div>
 
-    <!-- 结果展示区，显示换算后的第三值 -->
-    <div class="result-area" id="resultPanel">
+    <!-- 结果面板 -->
+    <div class="result-area">
         <div class="result-item">
-            <span class="result-label">📌 当前单位净值</span>
+            <span class="result-label">📌 单位净值</span>
             <span class="result-value" id="displayNav">—</span>
         </div>
         <div class="result-item">
@@ -283,20 +290,20 @@
             <span class="result-value" id="displayShares">—</span>
         </div>
         <div class="result-item">
-            <span class="result-label">💰 基金市值 (金额)</span>
+            <span class="result-label">💰 金额 (市值)</span>
             <span class="result-value" id="displayAmount">—</span>
         </div>
         <hr>
         <div class="result-item">
-            <span class="result-label">✨ 换算依据</span>
+            <span class="result-label">✨ 换算规则</span>
             <span class="result-value" id="formulaNote">等待输入</span>
         </div>
     </div>
     <div class="small-note">
-        ⚡ 根据净值实时联动 | 任意修改净值或份额/金额，自动计算对应项<br>
-        💡 提示：此工具用于净值换算，不含申购/赎回费，展示理论市值。
+        💡 智能识别您改动的是「份额」还是「金额」 → 自动计算另一方 (覆盖未改动的字段)<br>
+        ⚡ 按回车键 或 点击其他位置即触发换算 · 不含申购/赎回费
     </div>
-    <footer>📌 部署于 GitHub Pages · 基金净值换算器</footer>
+    <footer>📌 部署于 GitHub Pages · 改动谁就保留谁，自动计算另一方</footer>
 </div>
 
 <script>
@@ -310,279 +317,280 @@
     const displayAmountSpan = document.getElementById('displayAmount');
     const formulaNoteSpan = document.getElementById('formulaNote');
     
-    // 错误提示区
     const navError = document.getElementById('navError');
     const sharesError = document.getElementById('sharesError');
     const amountError = document.getElementById('amountError');
     
-    // 按钮
-    const shareToAmountBtn = document.getElementById('shareToAmountBtn');
-    const amountToShareBtn = document.getElementById('amountToShareBtn');
     const clearBtn = document.getElementById('clearBtn');
     
-    // 状态标志: 避免循环触发
+    // 防递归标志
     let isUpdating = false;
     
-    // 辅助函数: 获取有效的净值 (正数)
+    // 记录用户最后一次主动修改的字段 (份额 或 金额)
+    // 初始为 null，当用户在输入框内按键盘或通过UI交互时记录
+    let lastChangedField = null;   // 'shares' 或 'amount'
+    
+    // ---------- 纯解析函数 ----------
+    function parseNumber(str, allowZero = true, positiveOnly = true) {
+        if (typeof str !== 'string') str = String(str === undefined ? '' : str);
+        let trimmed = str.trim();
+        if (trimmed === '') return null;
+        let num = parseFloat(trimmed);
+        if (isNaN(num)) return null;
+        if (positiveOnly && num < 0) return null;
+        if (!allowZero && num === 0) return null;
+        return num;
+    }
+    
     function getValidNav() {
-        let rawNav = navInput.value.trim();
-        if (rawNav === "") return null;
-        let nav = parseFloat(rawNav);
-        if (isNaN(nav) || nav <= 0) return null;
+        let val = navInput.value;
+        let nav = parseNumber(val, false, true);
+        if (nav === null || nav <= 0) return null;
         return nav;
     }
     
-    // 获取有效的份额 (非负数，允许0，但0提示边界，份额可以是0)
     function getValidShares() {
-        let raw = sharesInput.value.trim();
-        if (raw === "") return null;
-        let shares = parseFloat(raw);
-        if (isNaN(shares)) return null;
-        if (shares < 0) return null;   // 不允许负份额
+        let val = sharesInput.value;
+        let shares = parseNumber(val, true, true);
+        if (shares === null) return null;
+        if (shares < 0) return null;
         return shares;
     }
     
-    // 获取有效的金额 (非负数，允许0)
     function getValidAmount() {
-        let raw = amountInput.value.trim();
-        if (raw === "") return null;
-        let amount = parseFloat(raw);
-        if (isNaN(amount)) return null;
+        let val = amountInput.value;
+        let amount = parseNumber(val, true, true);
+        if (amount === null) return null;
         if (amount < 0) return null;
         return amount;
     }
     
-    // 清除所有错误提示
     function clearErrors() {
         navError.innerText = '';
         sharesError.innerText = '';
         amountError.innerText = '';
     }
     
-    // 显示错误信息到对应字段下方
     function setNavError(msg) { navError.innerText = msg; }
     function setSharesError(msg) { sharesError.innerText = msg; }
     function setAmountError(msg) { amountError.innerText = msg; }
     
-    // 核心刷新UI: 根据当前净值 + 两个输入中的有效值，计算第三个缺失值（双向推算）
-    // 策略: 优先根据“份额”和“金额”哪个有效，来补齐另一个。如果两个都有效则同步（验证一致性并显示提示）
-    // 如果只有一个有效，自动计算另一个。如果净值无效，全部无法计算。
-    function recalcAndDisplay() {
+    // ---------- 核心换算: 智能识别改动字段 ----------
+    // 根据 lastChangedField 决定换算方向:
+    // - 如果用户最后改的是份额 -> 根据份额计算金额，覆盖金额框
+    // - 如果用户最后改的是金额 -> 根据金额计算份额，覆盖份额框
+    // - 如果 lastChangedField 为 null (初始化或清空后) 且两者都有值则优先以份额为基准（兼容旧逻辑）
+    // - 如果只有一个有值，则直接计算另一项 (不管 lastChangedField)
+    // 这样可以保证用户改动哪个字段，那个字段的值就保留原样，只覆盖未改动的部分
+    function performConversion() {
         if (isUpdating) return;
         isUpdating = true;
         
         clearErrors();
         
-        // 1. 获取净值
         const nav = getValidNav();
-        const isValidNav = (nav !== null);
+        const isValidNav = (nav !== null && nav > 0);
         
-        // 展示净值格式化
+        // 展示净值UI
         if (isValidNav) {
             displayNavSpan.innerText = nav.toFixed(6) + " 元";
         } else {
             displayNavSpan.innerText = "⚠️ 无效净值";
         }
         
-        // 获取份额/金额原始值 (可能为null)
-        let sharesRaw = getValidShares();
-        let amountRaw = getValidAmount();
+        let shares = getValidShares();
+        let amount = getValidAmount();
         
-        // 标记有效性
-        let sharesValid = (sharesRaw !== null);
-        let amountValid = (amountRaw !== null);
+        let sharesValid = (shares !== null);
+        let amountValid = (amount !== null);
         
-        // 如果净值无效: 不能做任何换算，但可以显示现有输入的值
+        // 1. 净值无效处理
         if (!isValidNav) {
             setNavError("❌ 单位净值必须为正数 (大于0)");
-            // 展示已有的份额/金额数值但无换算逻辑
-            displaySharesSpan.innerText = (sharesValid ? sharesRaw.toFixed(4) + " 份" : "—");
-            displayAmountSpan.innerText = (amountValid ? amountRaw.toFixed(4) + " 元" : "—");
+            displaySharesSpan.innerText = (sharesValid ? shares.toFixed(4) + " 份" : "—");
+            displayAmountSpan.innerText = (amountValid ? amount.toFixed(4) + " 元" : "—");
             formulaNoteSpan.innerText = "净值无效，无法换算";
-            if (!sharesValid && !amountValid) {
-                formulaNoteSpan.innerText = "请输入净值、份额或金额";
-            }
+            if (!sharesValid && !amountValid) formulaNoteSpan.innerText = "请输入有效净值、份额或金额";
             isUpdating = false;
             return;
         }
         
-        // 净值有效的情况下，处理各种组合
-        // 情况1: 份额有效 && 金额有效 -> 两者都存在，检查一致性并可选修正？但为了用户体验，如果两者都存在但不符合 金额 = 份额 * 净值，则标记警示，并优先根据份额刷新金额? 按照基金常识用户可能改了份额未改金额
-        // 策略: 为了直观，当两者都填时，以份额为基准刷新金额（保证金额=份额×净值），这样更符合净值换算逻辑；反之也可，但用户期望同步。为了让工具合理，当两者都有效时，我们以份额计算金额，覆盖金额字段（但金额框会变化）
-        // 但为了尊重用户输入的金额，如果份额有效并且金额也存在但偏差大于0.001，我们提示并根据份额自动修正金额（较合理）。类似专业换算器。
-        if (sharesValid && amountValid) {
-            // 两者都有值，检查一致性
-            const calculatedAmount = sharesRaw * nav;
-            const diff = Math.abs(calculatedAmount - amountRaw);
-            if (diff > 0.0001) {
-                // 存在偏差，以份额为准更新金额值 (自动修正)
-                const newAmount = sharesRaw * nav;
-                amountInput.value = newAmount.toFixed(6);
-                amountRaw = newAmount;
-                amountValid = true;
-                // 显示温和提示
-                setAmountError("⚡ 已根据份额与净值自动校正金额");
-            }
-            // 一致性后刷新展示
-            const finalAmount = sharesRaw * nav;
-            displaySharesSpan.innerText = sharesRaw.toFixed(4) + " 份";
-            displayAmountSpan.innerText = finalAmount.toFixed(4) + " 元";
-            formulaNoteSpan.innerText = `💰 金额 = 份额 × 净值 → ${sharesRaw.toFixed(4)} × ${nav.toFixed(6)} = ${finalAmount.toFixed(4)} 元`;
-        } 
-        else if (sharesValid && !amountValid) {
-            // 只有份额，计算金额
-            const calcAmount = sharesRaw * nav;
-            // 更新金额输入框 (不触发循环)
+        // 净值有效核心换算
+        // 情形1: 只有份额有效 -> 计算金额 (无论lastChangedField, 因为另一方无值)
+        if (sharesValid && !amountValid) {
+            const calcAmount = shares * nav;
             amountInput.value = calcAmount.toFixed(6);
-            // 更新显示
-            displaySharesSpan.innerText = sharesRaw.toFixed(4) + " 份";
+            displaySharesSpan.innerText = shares.toFixed(4) + " 份";
             displayAmountSpan.innerText = calcAmount.toFixed(4) + " 元";
-            formulaNoteSpan.innerText = `📐 根据份额换算：${sharesRaw.toFixed(4)} 份 × 净值 ${nav.toFixed(6)} = ${calcAmount.toFixed(4)} 元`;
-            // 清除金额错误
+            formulaNoteSpan.innerText = `📐 根据份额换算金额：${shares.toFixed(4)} 份 × 净值 ${nav.toFixed(6)} = ${calcAmount.toFixed(4)} 元`;
             setAmountError("");
-        } 
+            // 同步最后改动标记 (既然只有份额，实际上用户意图就是份额主导)
+            lastChangedField = 'shares';
+        }
+        // 情形2: 只有金额有效 -> 计算份额
         else if (!sharesValid && amountValid) {
-            // 只有金额，计算份额
-            const calcShares = amountRaw / nav;
-            if (calcShares < 0) {
-                setSharesError("计算异常");
-            } else {
-                sharesInput.value = calcShares.toFixed(6);
-                displaySharesSpan.innerText = calcShares.toFixed(6) + " 份";
-                displayAmountSpan.innerText = amountRaw.toFixed(4) + " 元";
-                formulaNoteSpan.innerText = `📐 根据金额换算：${amountRaw.toFixed(4)} 元 ÷ 净值 ${nav.toFixed(6)} = ${calcShares.toFixed(6)} 份`;
-                setSharesError("");
+            const calcShares = amount / nav;
+            sharesInput.value = calcShares.toFixed(6);
+            displaySharesSpan.innerText = calcShares.toFixed(6) + " 份";
+            displayAmountSpan.innerText = amount.toFixed(4) + " 元";
+            formulaNoteSpan.innerText = `📐 根据金额换算份额：${amount.toFixed(4)} 元 ÷ 净值 ${nav.toFixed(6)} = ${calcShares.toFixed(6)} 份`;
+            setSharesError("");
+            lastChangedField = 'amount';
+        }
+        // 情形3: 两者都有值 -> 根据用户最后改动的字段来决定换算方向
+        else if (sharesValid && amountValid) {
+            // 如果有明确的最后改动字段，就尊重用户意图
+            if (lastChangedField === 'shares') {
+                // 用户最后改了份额，根据份额重新计算金额
+                const correctAmount = shares * nav;
+                const diff = Math.abs(correctAmount - amount);
+                if (diff > 0.00001) {
+                    amountInput.value = correctAmount.toFixed(6);
+                    setAmountError("⚡ 已根据您修改的份额自动更新金额");
+                } else {
+                    setAmountError("");
+                }
+                displaySharesSpan.innerText = shares.toFixed(4) + " 份";
+                displayAmountSpan.innerText = correctAmount.toFixed(4) + " 元";
+                formulaNoteSpan.innerText = `🔄 根据份额换算金额：${shares.toFixed(4)} 份 × 净值 ${nav.toFixed(6)} = ${correctAmount.toFixed(4)} 元`;
+            } 
+            else if (lastChangedField === 'amount') {
+                // 用户最后改了金额，根据金额重新计算份额
+                const correctShares = amount / nav;
+                const diff = Math.abs(correctShares - shares);
+                if (diff > 0.00001) {
+                    sharesInput.value = correctShares.toFixed(6);
+                    setSharesError("⚡ 已根据您修改的金额自动更新份额");
+                } else {
+                    setSharesError("");
+                }
+                displaySharesSpan.innerText = correctShares.toFixed(6) + " 份";
+                displayAmountSpan.innerText = amount.toFixed(4) + " 元";
+                formulaNoteSpan.innerText = `🔄 根据金额换算份额：${amount.toFixed(4)} 元 ÷ 净值 ${nav.toFixed(6)} = ${correctShares.toFixed(6)} 份`;
             }
-        } 
+            else {
+                // 兼容旧逻辑或初始化后两者都有值但无改动记录，默认以份额为基准（更符合基金习惯）
+                const correctAmount = shares * nav;
+                const diff = Math.abs(correctAmount - amount);
+                if (diff > 0.00001) {
+                    amountInput.value = correctAmount.toFixed(6);
+                    setAmountError("⚡ 已根据份额自动修正金额");
+                } else {
+                    setAmountError("");
+                }
+                displaySharesSpan.innerText = shares.toFixed(4) + " 份";
+                displayAmountSpan.innerText = correctAmount.toFixed(4) + " 元";
+                formulaNoteSpan.innerText = `💰 金额 = 份额 × 净值 → ${shares.toFixed(4)} × ${nav.toFixed(6)} = ${correctAmount.toFixed(4)} 元`;
+                lastChangedField = 'shares'; // 设定默认
+            }
+        }
+        // 情形4: 两者都无效
         else {
-            // 份额和金额都缺失或无效
             displaySharesSpan.innerText = "—";
             displayAmountSpan.innerText = "—";
-            if (!sharesValid && !amountValid) {
-                formulaNoteSpan.innerText = "✨ 请输入份额或金额，自动换算另一项";
-            } else if (!sharesValid && amountValid === false && sharesRaw === null && amountRaw === null) {
-                formulaNoteSpan.innerText = "📝 在份额或金额框输入数值开始换算";
-            } else {
-                // 无效数值（比如负数或非数字）
-                if (sharesRaw === null && sharesInput.value !== "") setSharesError("份额必须是非负数字");
-                if (amountRaw === null && amountInput.value !== "") setAmountError("金额必须是非负数字");
-                formulaNoteSpan.innerText = "请填写有效的份额或金额 (正数或0)";
+            formulaNoteSpan.innerText = "✨ 请输入份额 或 金额，按回车/失焦自动换算";
+            if (sharesInput.value !== "" && shares === null) {
+                setSharesError("份额必须为非负数字 (例如 1000.5)");
             }
-            // 保留当前显示
-            if(sharesValid === false && sharesInput.value !== "") displaySharesSpan.innerText = "无效数值";
-            else displaySharesSpan.innerText = "—";
-            if(amountValid === false && amountInput.value !== "") displayAmountSpan.innerText = "无效数值";
-            else displayAmountSpan.innerText = "—";
+            if (amountInput.value !== "" && amount === null) {
+                setAmountError("金额必须为非负数字 (例如 5000.0)");
+            }
+            // 清空记录，避免残留
+            lastChangedField = null;
         }
         
-        // 额外处理份额和金额都为0的边缘情况, 显示清晰
-        const finalSharesNum = getValidShares();
-        const finalAmountNum = getValidAmount();
-        if (isValidNav && finalSharesNum === 0 && finalAmountNum !== null && finalAmountNum === 0) {
+        // 零值友好提示
+        const finalShares = getValidShares();
+        const finalAmount = getValidAmount();
+        if (isValidNav && finalShares === 0 && finalAmount !== null && finalAmount === 0) {
             formulaNoteSpan.innerText = "份额为0，对应市值为0元";
-        } else if (isValidNav && finalAmountNum === 0 && finalSharesNum !== null && finalSharesNum === 0) {
+        } else if (isValidNav && finalAmount === 0 && finalShares !== null && finalShares === 0) {
             formulaNoteSpan.innerText = "金额为0，对应份额为0份";
         }
         
         isUpdating = false;
     }
     
-    // 监听输入事件，调用刷新
-    function handleInputChange() {
-        if (isUpdating) return;
-        recalcAndDisplay();
-    }
-    
-    // 份额转金额按钮: 强制基于当前份额刷新金额 (如果净值有效且有份额)
-    function forceShareToAmount() {
-        if (isUpdating) return;
-        const nav = getValidNav();
-        if (!nav) {
-            setNavError("净值无效，无法换算");
-            recalcAndDisplay();
-            return;
-        }
-        let shares = getValidShares();
-        if (shares === null || shares < 0) {
-            setSharesError("请先输入有效的份额 (≥0)");
-            recalcAndDisplay();
-            return;
-        }
-        // 计算金额并更新金额框
-        const newAmount = shares * nav;
-        amountInput.value = newAmount.toFixed(6);
-        // 触发重新计算
-        recalcAndDisplay();
-    }
-    
-    // 金额转份额按钮: 强制基于金额刷新份额
-    function forceAmountToShare() {
-        if (isUpdating) return;
-        const nav = getValidNav();
-        if (!nav) {
-            setNavError("净值无效，无法换算");
-            recalcAndDisplay();
-            return;
-        }
-        let amount = getValidAmount();
-        if (amount === null || amount < 0) {
-            setAmountError("请先输入有效的金额 (≥0)");
-            recalcAndDisplay();
-            return;
-        }
-        const newShares = amount / nav;
-        sharesInput.value = newShares.toFixed(6);
-        recalcAndDisplay();
-    }
-    
-    // 清空所有输入（保留净值默认值1.258，但清空份额与金额）
+    // ---------- 清空功能 (保留净值默认示例) ----------
     function clearAll() {
         if (isUpdating) return;
         isUpdating = true;
-        // 不清除净值，但保留合理净值，也可以重置为示例净值1.258，但不清空保留原值？为了体验，保留当前净值不清零，但清空份额金额
-        // 但是为了彻底重置，让份额、金额变为空字符串
+        navInput.value = '1.2580';
         sharesInput.value = '';
         amountInput.value = '';
-        // 可选: 重置净值到默认1.258 (更好)
-        navInput.value = '1.2580';
-        // 清除所有错误样式
+        lastChangedField = null;      // 重置改动记录
         clearErrors();
-        // 强制刷新显示
         isUpdating = false;
-        recalcAndDisplay();
+        performConversion();          // 刷新界面
     }
     
-    // 绑定事件 (输入实时换算)
-    navInput.addEventListener('input', handleInputChange);
-    sharesInput.addEventListener('input', handleInputChange);
-    amountInput.addEventListener('input', handleInputChange);
+    // ---------- 监听用户主动修改字段 (用于记录最后修改的是份额还是金额) ----------
+    // 注意：只在用户聚焦输入框并通过键盘/粘贴等真正改变值时记录，不干扰换算执行。
+    // 我们使用 'focus' 和 'input' 轻量级记录，但为了避免冲突，仅在非更新状态下记录。
+    // 并且要确保记录时不会触发换算（换算只由回车/失焦触发）
+    function onSharesUserEdit() {
+        if (!isUpdating) {
+            lastChangedField = 'shares';
+        }
+    }
     
-    // 按钮绑定
-    shareToAmountBtn.addEventListener('click', forceShareToAmount);
-    amountToShareBtn.addEventListener('click', forceAmountToShare);
+    function onAmountUserEdit() {
+        if (!isUpdating) {
+            lastChangedField = 'amount';
+        }
+    }
+    
+    // 监听 input 事件仅用于记录最后编辑的字段，绝对不在此执行换算逻辑
+    sharesInput.addEventListener('input', onSharesUserEdit);
+    amountInput.addEventListener('input', onAmountUserEdit);
+    
+    // 额外: 当用户手动清空或粘贴时同样记录, 通过input已覆盖
+    
+    // ---------- 换算触发: 回车 或 失焦 (blur) ----------
+    function onEnterKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performConversion();
+        }
+    }
+    
+    function onBlur() {
+        performConversion();
+    }
+    
+    // 份额框事件
+    sharesInput.addEventListener('keydown', onEnterKey);
+    sharesInput.addEventListener('blur', onBlur);
+    
+    // 金额框事件 (完全一致)
+    amountInput.addEventListener('keydown', onEnterKey);
+    amountInput.addEventListener('blur', onBlur);
+    
+    // 净值修改也需要重新计算 (用户改净值后也需要基于现有份额或金额重新换算)
+    navInput.addEventListener('keydown', onEnterKey);
+    navInput.addEventListener('blur', onBlur);
+    // 净值编辑时同样记录一个特殊标记？不需要，净值变化时应该根据当前的 lastChangedField 重新计算
+    // 但为了避免净值变化后逻辑错乱，在performConversion内部会根据现有有效值和lastChangedField进行处理，完美。
+    
+    // 清空按钮
     clearBtn.addEventListener('click', clearAll);
     
-    // 页面初始化调用，展示默认值：净值=1.258，份额留空，金额留空 -> 显示提示
-    // 为了初始整洁，默认设置无份额金额，显示等待输入。
+    // 额外优化: 当用户通过清空按钮重置后，lastChangedField = null，行为干净。
+    
+    // 初始化页面
     window.addEventListener('DOMContentLoaded', () => {
-        // 预设净值示例，但是份额/金额为空
         navInput.value = '1.2580';
         sharesInput.value = '';
         amountInput.value = '';
-        recalcAndDisplay();
+        lastChangedField = null;
+        performConversion();
     });
     
-    // 增加对小数点的友好处理
-    function validateFloatInput(e) {
-        // 只是让用户不能输入e字符，原生number已经控制, 不做额外复杂校验
-    }
-    [sharesInput, amountInput, navInput].forEach(inp => {
-        inp.addEventListener('keydown', (e) => {
-            if (e.key === 'e' || e.key === 'E') {
-                e.preventDefault();
-            }
-        });
-    });
+    // 确保在外部点击清空后，焦点离开时不会误触发旧的改动标记，已经重置。
+    // 完美实现: 用户改动「份额」→ 自动计算「金额」(覆盖金额框)
+    //           用户改动「金额」→ 自动计算「份额」(覆盖份额框)
+    //           两者均有值但无改动记录时, 默认以份额为准 (符合直觉)
+    //           回车/失焦触发，输入过程零干扰。
 </script>
 </body>
 </html>
